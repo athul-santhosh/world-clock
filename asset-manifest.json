@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/world-clock/static/css/main.06670373.css",
+    "main.js": "/world-clock/static/js/main.bb4a1483.js",
+    "index.html": "/world-clock/index.html",
+    "main.06670373.css.map": "/world-clock/static/css/main.06670373.css.map",
+    "main.bb4a1483.js.map": "/world-clock/static/js/main.bb4a1483.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.06670373.css",
+    "static/js/main.bb4a1483.js"
+  ]
+}
