@@ -5,7 +5,7 @@ const TIMEZONES = [
    {
       key: "IST",
       label: "India",
-      city: "Mumbai",
+      city: "Banglore",
       tz: "Asia/Kolkata",
       accent: "#E8500A",
       lightAccent: "#FFF0E8",
@@ -23,7 +23,7 @@ const TIMEZONES = [
    {
       key: "PST",
       label: "Pacific",
-      city: "Los Angeles",
+      city: "California",
       tz: "America/Los_Angeles",
       accent: "#1A5FCC",
       lightAccent: "#E8F0FF",
@@ -45,10 +45,15 @@ function getTimeInZone(tz) {
    });
    const parts = formatter.formatToParts(now);
    const get = (type) => parts.find((p) => p.type === type)?.value ?? "";
+   const hours = parseInt(get("hour"));
+   const minutes = parseInt(get("minute"));
+   const seconds = parseInt(get("second"));
    return {
-      hours: parseInt(get("hour")),
-      minutes: parseInt(get("minute")),
-      seconds: parseInt(get("second")),
+      hours,
+      minutes,
+      seconds,
+      hours12: hours % 12 || 12,
+      ampm: hours >= 12 ? "PM" : "AM",
       timeStr: `${get("hour")}:${get("minute")}:${get("second")}`,
       dateStr: `${get("weekday")}, ${get("day")} ${get("month")}`,
    };
@@ -237,7 +242,7 @@ function TimeCard({ zone, time }) {
                   lineHeight: 1,
                }}
             >
-               {String(time.hours).padStart(2, "0")}:{String(time.minutes).padStart(2, "0")}
+               {String(time.hours12).padStart(2, "0")}:{String(time.minutes).padStart(2, "0")}
             </span>
             <span
                style={{
@@ -251,10 +256,22 @@ function TimeCard({ zone, time }) {
             >
                :{String(time.seconds).padStart(2, "0")}
             </span>
-            <div style={{ marginLeft: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-               <span style={{ fontSize: 24 }}>{periodIcon}</span>
-               <span style={{ fontSize: 12, color: "#334155", fontWeight: 800, fontFamily: "monospace", whiteSpace: "nowrap" }}>
-                  {periodLabel}
+            <div style={{ marginLeft: 8, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, alignSelf: "center" }}>
+               <span style={{ fontSize: 20 }}>{periodIcon}</span>
+               <span
+                  style={{
+                     fontSize: 20,
+                     fontWeight: 900,
+                     fontFamily: "'Courier New', monospace",
+                     color: "#fff",
+                     background: zone.accent,
+                     padding: "4px 12px",
+                     borderRadius: 10,
+                     letterSpacing: "0.1em",
+                     boxShadow: `0 3px 10px ${zone.accent}66`,
+                  }}
+               >
+                  {time.ampm}
                </span>
             </div>
          </div>
@@ -348,18 +365,25 @@ export default function TimeZoneWindow() {
             </div>
          </div>
 
-         {/* Cards */}
+         {/* Cards - Horizontal Scroll */}
          <div
             style={{
                display: "flex",
-               flexDirection: "column",
+               flexDirection: "row",
                gap: 22,
                width: "100%",
-               maxWidth: 720,
+               overflowX: "auto",
+               scrollSnapType: "x mandatory",
+               justifyContent: "center",
+               padding: "8px 28px",
+               scrollbarWidth: "none",
+               msOverflowStyle: "none",
             }}
          >
             {TIMEZONES.map((zone) => (
-               <TimeCard key={zone.key} zone={zone} time={times[zone.key]} />
+               <div key={zone.key} style={{ flex: "0 0 auto", width: "min(90vw, 520px)", scrollSnapAlign: "center" }}>
+                  <TimeCard zone={zone} time={times[zone.key]} />
+               </div>
             ))}
          </div>
       </div>
