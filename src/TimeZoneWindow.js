@@ -12,6 +12,16 @@ const TIMEZONES = [
       flag: "🇮🇳",
    },
    {
+      key: "CET",
+      label: "Europe",
+      city: "France",
+      tz: "Europe/Berlin",
+      accent: "#002395",
+      lightAccent: "#E8EEF8",
+      flag: "🇫🇷",
+      dynamicKey: true,
+   },
+   {
       key: "BRT",
       label: "Brazil",
       city: "São Paulo",
@@ -68,6 +78,11 @@ function getOffsetLabel(tz) {
    const mins = Math.abs(Math.floor((tzOffset % 3600000) / 60000));
    const sign = hours >= 0 ? "+" : "";
    return `UTC${sign}${hours}${mins ? `:${String(mins).padStart(2, "0")}` : ""}`;
+}
+
+function getTimezoneAbbr(tz) {
+   const parts = new Intl.DateTimeFormat("en-GB", { timeZone: tz, timeZoneName: "short" }).formatToParts(new Date());
+   return parts.find((p) => p.type === "timeZoneName")?.value ?? tz;
 }
 
 function getTimeForSliderValue(tz, sourceTz, sourceHours, sourceMinutes) {
@@ -216,6 +231,7 @@ function Bar24({ hours, minutes, accent, lightAccent }) {
 
 function TimeCard({ zone, time, isMobile }) {
    const offset = getOffsetLabel(zone.tz);
+   const displayKey = zone.dynamicKey ? getTimezoneAbbr(zone.tz) : zone.key;
    const isDaytime = time.hours >= 6 && time.hours < 20;
    const periodIcon = isDaytime ? "☀️" : "🌙";
 
@@ -265,7 +281,7 @@ function TimeCard({ zone, time, isMobile }) {
                         fontFamily: "'Courier New', monospace",
                      }}
                   >
-                     {zone.key}
+                     {displayKey}
                   </span>
                   <span
                      style={{
@@ -488,7 +504,7 @@ function SliderSection({ isMobile }) {
                         }}
                      >
                         <span style={{ fontSize: isMobile ? 14 : 18 }}>{z.flag}</span>
-                        {z.key}
+                        {z.dynamicKey ? getTimezoneAbbr(z.tz) : z.key}
                      </button>
                   );
                })}
@@ -517,7 +533,7 @@ function SliderSection({ isMobile }) {
                      letterSpacing: "-1px",
                   }}
                >
-                  {activeZoneKey} {formattedTime}
+                  {activeZone.dynamicKey ? getTimezoneAbbr(activeZone.tz) : activeZoneKey} {formattedTime}
                </span>
             </div>
          </div>
